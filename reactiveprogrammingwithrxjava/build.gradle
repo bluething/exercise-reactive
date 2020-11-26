@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'io.github.bluething.reactive'
+version '1.0.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'io.reactivex.rxjava2:rxjava:2.2.20'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
