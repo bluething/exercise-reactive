@@ -5,10 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SampleCode {
 
-    private Map<String, String> caches = new HashMap<>();
+    private Map<String, String> caches = new ConcurrentHashMap<>();
 
     private void putInCaches(String key, String value) {
         caches.put(key, value);
@@ -35,8 +36,7 @@ public class SampleCode {
     }
 
     @Test
-    public void sample3() {
-        putInCaches("SOMEKEY", "Hello World!!");
+    public void sample3() throws InterruptedException {
         Observable.create(s -> {
             String fromCaches = getFromCaches("SOMEKEY");
             if (fromCaches != null) {
@@ -44,9 +44,28 @@ public class SampleCode {
                 s.onNext(fromCaches);
                 s.onComplete();
             } else {
-                //TODO learn callback 1st
+                getDataAsynchronously("SOMEKEY").onResponse(v -> {
+                    putInCaches("SOMEKEY", "Hello World!!");
+                    s.onNext(v);
+                    s.onComplete();
+                }).onError(exception -> {
+                    s.onError(exception);
+                });
             }
         }).subscribe(s -> System.out.println(s));
+        Thread.sleep(2000);
+    }
+    private Callback getDataAsynchronously(String key) {
+        final Callback callback = new Callback();
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                callback.getOnResponse().accept("Hello World!!");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        return callback;
     }
 
 }
