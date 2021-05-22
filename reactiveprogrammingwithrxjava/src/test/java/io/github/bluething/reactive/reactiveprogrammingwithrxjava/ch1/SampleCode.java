@@ -92,4 +92,16 @@ public class SampleCode {
         System.out.println("This statement print before values are emitted");
         Thread.sleep(1000);
     }
+
+    @Test
+    public void sample6() throws InterruptedException {
+        Observable.<Integer>create(s -> {
+            new Thread(() -> {
+                s.onNext(1);
+                s.onNext(2);
+                s.onNext(3);
+            }).start();
+        }).subscribe(s -> System.out.println("The value " + s));
+        Thread.sleep(2000);
+    }
 }
