@@ -231,4 +231,12 @@ public class SampleCode {
     private Observable<String> getDataAsObservable(int i) {
         return Observable.just("The value: " + i);
     }
+
+    @Test
+    public void sample14() {
+        Observable<String> o1 = getDataAsObservable(1);
+        Observable<String> o2 = getDataAsObservable(2);
+
+        Observable<String> o3 = Observable.merge(o1, o2);
+    }
 }
