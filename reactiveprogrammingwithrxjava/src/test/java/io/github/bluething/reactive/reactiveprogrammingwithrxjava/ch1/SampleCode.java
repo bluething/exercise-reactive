@@ -218,4 +218,17 @@ public class SampleCode {
     private Observable<String> getDataFromNetweorkAsynchronously() {
         return Observable.range(0, 100).map(Objects::toString);
     }
+
+    @Test
+    public void sample13() {
+        Observable<String> o1 = getDataAsObservable(1);
+        Observable<String> o2 = getDataAsObservable(2);
+
+        Observable<String> o3 = Observable.zip(o1, o2, (x, y) -> {
+            return x+y;
+        });
+    }
+    private Observable<String> getDataAsObservable(int i) {
+        return Observable.just("The value: " + i);
+    }
 }
