@@ -104,4 +104,21 @@ public class SampleCode {
         }).subscribe(s -> System.out.println("The value " + s));
         Thread.sleep(2000);
     }
+
+    @Test
+    public void sample7() throws InterruptedException {
+        Observable.<Integer>create(s -> {
+            new Thread(() -> {
+                s.onNext(1);
+                s.onNext(2);
+                s.onNext(3);
+            }).start();
+            new Thread(() -> {
+                s.onNext(4);
+                s.onNext(5);
+            }).start();
+            // need to safely wait for both threads to complete to call onComplete()
+        }).subscribe(s -> System.out.println("The value " + s));
+        Thread.sleep(2000);
+    }
 }
