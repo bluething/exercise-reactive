@@ -121,4 +121,24 @@ public class SampleCode {
         }).subscribe(s -> System.out.println("The value " + s));
         Thread.sleep(2000);
     }
+
+    @Test
+    public void sample8() throws InterruptedException {
+        Observable<Integer> o1 = Observable.create(s -> {
+            new Thread(() -> {
+                s.onNext(1);
+                s.onNext(2);
+                s.onNext(3);
+            }).start();
+        });
+        Observable<Integer> o2 = Observable.create(s -> {
+            new Thread(() -> {
+                s.onNext(4);
+                s.onNext(5);
+            }).start();
+        });
+        Observable<Integer> o3 = Observable.merge(o1, o2);
+        o3.subscribe(s -> System.out.println("The value " + s));
+        Thread.sleep(2000);
+    }
 }
