@@ -78,4 +78,18 @@ public class SampleCode {
 
         o.map(i -> "Number " + i).subscribe(s -> System.out.println(s));
     }
+
+    @Test
+    public void sample5() throws InterruptedException {
+        Observable.<Integer>create(s -> {
+            new Thread(() -> s.onNext(2), "My thread").start();
+        })
+                .doOnNext(i -> System.out.println(Thread.currentThread()))
+                .filter(i -> i % 2 ==0)
+                .map(i -> "Value " + i + " processed on " + Thread.currentThread())
+                .subscribe(s -> System.out.println("The value " + s)
+                );
+        System.out.println("This statement print before values are emitted");
+        Thread.sleep(1000);
+    }
 }
