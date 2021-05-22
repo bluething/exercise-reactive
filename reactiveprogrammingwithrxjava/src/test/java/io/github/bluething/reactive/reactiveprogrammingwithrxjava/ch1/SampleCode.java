@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class SampleCode {
 
@@ -140,5 +141,29 @@ public class SampleCode {
         Observable<Integer> o3 = Observable.merge(o1, o2);
         o3.subscribe(s -> System.out.println("The value " + s));
         Thread.sleep(2000);
+    }
+
+    @Test
+    public void sample9() {
+        Observable<String> o = Observable.create(s -> {
+            getDataWithCallback("SOME_KEY", data -> {
+                s.onNext(data);
+                s.onComplete();
+            });
+        });
+        // lazy, subscribing cause getDataFromServerWithCallback called
+        // observable has been reused
+        o.subscribe(s -> System.out.println("Subscriber 1: " + s));
+        o.subscribe(s -> System.out.println("Subscriber 2: " + s));
+
+        // the power of laziness, composition
+
+        Observable<String> lazyFallback = Observable.just("Fallback");
+        o
+                .onErrorResumeNext(lazyFallback)
+                .subscribe(s -> System.out.println(s));
+    }
+    private void getDataWithCallback(String key, Consumer<String> consumer) {
+        consumer.accept("The data " + Math.random());
     }
 }
