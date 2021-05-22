@@ -1,11 +1,14 @@
 package io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch1;
 
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 public class SampleCode {
@@ -158,12 +161,30 @@ public class SampleCode {
 
         // the power of laziness, composition
 
+        // represents work that can be done, but will only be done if something subscribes to it
         Observable<String> lazyFallback = Observable.just("Fallback");
         o
-                .onErrorResumeNext(lazyFallback)
+                .onErrorResumeNext(lazyFallback) // subscribe to if fails
                 .subscribe(s -> System.out.println(s));
     }
     private void getDataWithCallback(String key, Consumer<String> consumer) {
         consumer.accept("The data " + Math.random());
+    }
+
+    @Test
+    public void sample10() throws ExecutionException, InterruptedException {
+        // made eager become lazy
+        CompletableFuture<String> f1 = getDataasFeature(1);
+        CompletableFuture<String> f2 = getDataasFeature(2);
+
+        CompletableFuture<String> f3 = f1.thenCombine(f2, (x, y) -> {
+            return x+y;
+        });
+
+        String result = f3.get();
+        System.out.println(result);
+    }
+    private CompletableFuture<String> getDataasFeature(int i) {
+        return CompletableFuture.completedFuture("The value: " + i);
     }
 }
