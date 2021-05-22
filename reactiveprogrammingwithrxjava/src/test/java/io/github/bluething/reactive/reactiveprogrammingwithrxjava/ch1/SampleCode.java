@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SampleCode {
 
@@ -186,5 +188,20 @@ public class SampleCode {
     }
     private CompletableFuture<String> getDataasFeature(int i) {
         return CompletableFuture.completedFuture("The value: " + i);
+    }
+
+    @Test
+    public void sample11() {
+        // Iterable<String> as Stream<String>
+        getDataFromLocalMemorySynchronously()
+                .skip(10)
+                .limit(5)
+                .map(s -> s + "_transform")
+                .forEach(System.out::println);
+    }
+    private Stream<String> getDataFromLocalMemorySynchronously() {
+        return IntStream
+                .range(0, 100)
+                .mapToObj(Integer::toString);
     }
 }
