@@ -68,4 +68,14 @@ public class SampleCode {
         return callback;
     }
 
+    @Test
+    public void sample4() {
+        Observable<Integer> o = Observable.create(s -> {
+            s.onNext(1);
+            s.onNext(2);
+            s.onNext(3);
+        });
+
+        o.map(i -> "Number " + i).subscribe(s -> System.out.println(s));
+    }
 }
