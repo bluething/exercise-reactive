@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -203,5 +204,18 @@ public class SampleCode {
         return IntStream
                 .range(0, 100)
                 .mapToObj(Integer::toString);
+    }
+
+    @Test
+    public void sample12() {
+        // Observable<String>
+        getDataFromNetweorkAsynchronously()
+                .skip(10)
+                .take(5)
+                .map(s -> s + "_transform")
+                .subscribe(System.out::println);
+    }
+    private Observable<String> getDataFromNetweorkAsynchronously() {
+        return Observable.range(0, 100).map(Objects::toString);
     }
 }
