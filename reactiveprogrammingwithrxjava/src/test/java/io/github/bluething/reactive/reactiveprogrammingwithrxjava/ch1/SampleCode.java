@@ -1,5 +1,6 @@
 package io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch1;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -263,6 +264,18 @@ public class SampleCode {
     }
     private Single<String> getDataasSingle(int i) {
         return Single.just("Done " + i);
+    }
+
+    // Completable is an abstraction for two callbacks, completion and failure
+    private Completable writeToDatabase(Object data) {
+        return Completable.create(s -> {
+            doAsyncWrite(data,
+                    () -> s.onComplete(),
+                    error -> s.onError(error));
+        });
+    }
+    private static void doAsyncWrite(Object data, Runnable onSuccess, Consumer<Exception> onError) {
+        onSuccess.run();
     }
 
 }
