@@ -1,10 +1,11 @@
 package io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch1;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -239,4 +240,29 @@ public class SampleCode {
 
         Observable<String> o3 = Observable.merge(o1, o2);
     }
+
+    @Test
+    public void sample15() {
+        Flowable aMergeb = getDataA().mergeWith(getDataB());
+    }
+    public static Single getDataA() {
+        return Single.<String>create(o -> {
+            o.onSuccess("DataA");
+        }).subscribeOn(Schedulers.io());
+    }
+    public static Single getDataB() {
+        return Single.just("Data B:")
+                .subscribeOn(Schedulers.io());
+    }
+
+    @Test
+    public void sample16() {
+        Single<String> s1 = getDataasSingle(1);
+        Single<String> s2 = getDataasSingle(2);
+        Flowable<String> o1 = Single.<String>merge(s1, s2);
+    }
+    private Single<String> getDataasSingle(int i) {
+        return Single.just("Done " + i);
+    }
+
 }
