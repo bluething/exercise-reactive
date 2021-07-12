@@ -113,11 +113,11 @@ Individual Observable streams permit neither concurrency nor parallelism (always
 onNext(), onCompleted(), onError() can never be emitted concurrently. Each event can be emitted from a different thread, as long as the emissions are not concurrent.
 
 See [sample6()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code how to use sequential concurrent. It's better to use schedulers instead of thread.  
-See [sample6()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code how we try to use multiple thread that can invoke onNext() concurrently.
+See [sample7()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code how we try to use multiple thread that can invoke onNext() concurrently. This violate the [contract](https://github.com/bluething/exercisereactive/tree/main/observable#the-observable-contract).
 
 The solution? Composition, using merge or flatMap operator.
 
-See [sample7()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code we use merge.  
+See [sample8()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code we use merge.  
 Because we use asynchronous:  
 1. 1 will appear before 2.  
 2. 4 will appear before 5.  
@@ -133,7 +133,9 @@ Why onNext prohibited from being called simultaneously?
 
 The Observable type is lazy, meaning it _does nothing until it is subscribed to_. This differs from an eager type such as a Future, which when created _represents active work_.  
 Subscription, not construction starts work. Subscribing to the Observable causes the work to be done  
-Observables can be reused. Future can't be reused.  
+Observables can be reused. Future can't be reused.
+
+See [sample9()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java)
 
 #### Duality
 
