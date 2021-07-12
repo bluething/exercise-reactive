@@ -47,9 +47,9 @@ interface Observer<T> {
     void onCompleted()
 }
 ```  
-onNext(). Can be never be called, only once, many, or infinite times.  
-onError(). Terminal event, called only once.  
-onCompleted().Terminal event, called only once.  
+`onNext()`. Can be never be called, only once, many, or infinite times.  
+`onError()`. Terminal event, called only once.  
+`onCompleted()`.Terminal event, called only once.  
 When a terminal event is called, the Observable stream is finished and no further events can be sent over it. Terminal events might never occur if the stream is infinite and does not fail.
 
 Advance type of Observer is Subscriber, for interactive pull.  
@@ -63,12 +63,12 @@ interface Subscriber<T> implements Observer<T>, Subscription {
     void setProducer(Producer p)
 }
 ```  
-unsubscribe(). Allow a subscriber to unsubscribe from an Observable stream.  
-setProducer(). Form a bidirectional communication channel between the producer and consumer used for flow control.
+`unsubscribe()`. Allow a subscriber to unsubscribe from an Observable stream.  
+`setProducer()`. Form a bidirectional communication channel between the producer and consumer used for flow control.
 
 #### Async versus Sync
 
-An Observable can be synchronous, and in fact defaults to being synchronous. RxJava never adds concurrency unless it is asked to do so.  
+An Observable can be synchronous, and in fact _defaults to being synchronous_. RxJava never adds concurrency unless it is asked to do so.  
 A synchronous Observable would be subscribed to, emit all data using the subscriber’s thread, and complete (if finite). An Observable backed by blocking network I/O would synchronously block the subscribing thread and then emit via onNext() when the blocking network I/O returned.  
 See [sample1()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code
 
@@ -137,7 +137,7 @@ Observables can be reused. Future can't be reused.
 
 #### Duality
 
-A Rx Observable is the async “dual” of an Iterable. Anything you can do synchronously via pull with an Iterable and Iterator can be done asynchronously via push with an Observable and Observer. This means that the same programming model can be applied to both!
+A Rx Observable is the async "dual" of an Iterable. Anything you can do synchronously via pull with an Iterable and Iterator can be done asynchronously via push with an Observable and Observer. This means that the same programming model can be applied to both!
 
 | Pull (Iterable) | Push (Observerable) |
 | --- | ---- |
