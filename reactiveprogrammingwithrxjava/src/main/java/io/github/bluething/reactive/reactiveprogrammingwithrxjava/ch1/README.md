@@ -1,13 +1,16 @@
 ### Introduction
 
 RxJava is a specific implementation of reactive programming for Java and Android that is influenced by functional programming.  
-It favors _function composition_, _avoidance of global state and side effects_, and _thinking in streams_ to compose asynchronous and event-based programs.  
+- It favors _function composition_.  
+- Avoidance of _global state_ and _side effects_.  
+- _Thinking in streams_ to compose asynchronous and event-based programs.  
+
 It begins with the _observer pattern_ of producer/consumer callbacks and extends it with dozens of operators that allow _composing_, _transforming_, _scheduling_, _throttling_, _error handling_, and _lifecycle management_.
 
-Reactive programming focused on _reacting to changes_, such as data values or events. It can and often is done imperatively. A callback is an approach to reactive programming done imperatively.
+Reactive programming focused on _reacting to change_, such as data values or events.  
+It can and often is done imperatively. A callback is an approach to reactive programming done imperatively.
 
-Reactive-functional programming is an approach to programming—an abstraction on top of imperative systems—that allows us to program asynchronous and event-driven use cases without having to think like the computer itself and imperatively define the complex interactions of state, particularly across thread and network boundaries.  
-Useful when it comes to asynchronous and event-driven systems (because concurrency and parallelism are involved). It's hard to write high-performance, efficient, scalable, and correct concurrent software.
+Reactive extension it is not Functional Reactive Programming (FRP), read [here](https://stackoverflow.com/questions/1028250/what-is-functional-reactive-programming/1030631#1030631).
 
 Reactive-functional programming try to solve concurrency and parallelism problems. More colloquially, it is solving callback hell.
 
@@ -18,8 +21,9 @@ When we need reactive programming?
 
 If we're handling only one event stream, reactive-_imperative_ programming with a callback is going to be fine.
 
-If your program is like most though, you need to combine events (or asynchronous responses from functions or network calls), have conditional logic interacting between them, and must handle failure scenarios and resource cleanup on any and all of them.  
-Then reactive-functional programming is a good choice.
+When reactive-functional is a good choice?  
+- If you need to combine events (or asynchronous responses from functions or network calls).  
+- If you have conditional logic interacting between the events, and must handle failure scenarios and resource cleanup on any and all of them.
 
 ### Observable
 
@@ -31,10 +35,10 @@ Then reactive-functional programming is a good choice.
 
 #### Push versus Pull
 
-Observable and related Observer type signatures support events being pushed at it.  
+The entire point of RxJava being reactive is to support push.  
 Observable type also supports an asynchronous feedback channel (also sometimes referred to as async-pull or reactive-pull), as an approach to flow control or backpressure in async systems.
 
-To support receiving events via push, an Observable/Observer pair connect via subscription.  
+To support receiving events via push, an Observable/Observer pair connect via `Subscription`.  
 ```java
 interface Observable<T> {
     Subscription subscribe(Observer s)
@@ -47,12 +51,13 @@ interface Observer<T> {
     void onCompleted()
 }
 ```  
-`onNext()`. Can be never be called, only once, many, or infinite times.  
-`onError()`. Terminal event, called only once.  
-`onCompleted()`.Terminal event, called only once.  
+- `onNext()`. Can be never be called, only once, many, or infinite times.  
+- `onError()`. Terminal event, called only once.  
+- `onCompleted()`.Terminal event, called only once.  
+
 When a terminal event is called, the Observable stream is finished and no further events can be sent over it. Terminal events might never occur if the stream is infinite and does not fail.
 
-Advance type of Observer is Subscriber, for interactive pull.  
+Advance type of Observer is `Subscriber`, for interactive pull.  
 ```java
 interface Subscriber<T> implements Observer<T>, Subscription {
     void onNext(T t)
@@ -63,12 +68,12 @@ interface Subscriber<T> implements Observer<T>, Subscription {
     void setProducer(Producer p)
 }
 ```  
-`unsubscribe()`. Allow a subscriber to unsubscribe from an Observable stream.  
-`setProducer()`. Form a bidirectional communication channel between the producer and consumer used for flow control.
+- `unsubscribe()`. Allow a subscriber to unsubscribe from an Observable stream.  
+- `setProducer()`. Form a bidirectional communication channel between the producer and consumer used for flow control.
 
 #### Async versus Sync
 
-An Observable can be synchronous, and in fact _defaults to being synchronous_. RxJava never adds concurrency unless it is asked to do so.  
+An Observable can be asynchronous, and in fact _defaults to being synchronous_. RxJava never adds concurrency unless it is asked to do so.  
 A synchronous Observable would be subscribed to, emit all data using the subscriber’s thread, and complete (if finite). An Observable backed by blocking network I/O would synchronously block the subscribing thread and then emit via onNext() when the blocking network I/O returned.  
 See [sample1()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code
 
@@ -94,9 +99,7 @@ If the data not in memory? Perform the network call asynchronously and return th
 
 Operator use synchronous computation because of performance reason.
 
-See [sample4()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code.  
-If the map operator asynchronous each number scheduled onto a thread where the string concatenation would be performed.  
-It's have nondeterministic latency due to scheduling, context switching, and so on
+See [sample4()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code.
 
 Most Observable function pipelines are synchronous (unless a specific operator needs to be async, such as timeout or observeOn), whereas the Observable itself can be async.
 
@@ -115,7 +118,8 @@ onNext(), onCompleted(), onError() can never be emitted concurrently. Each event
 See [sample6()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code how to use sequential concurrent. It's better to use schedulers instead of thread.  
 See [sample7()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code how we try to use multiple thread that can invoke onNext() concurrently. This violate the [contract](https://github.com/bluething/exercisereactive/tree/main/observable#the-observable-contract).
 
-The solution? Composition, using merge or flatMap operator.
+The solution? Composition, using merge or flatMap operator.  
+A single Observable stream is always serialized, but each Observable stream can operate independently of one another, and thus concurrently and/or in parallel.
 
 See [sample8()](https://github.com/bluething/exercisereactive/blob/main/reactiveprogrammingwithrxjava/src/test/java/io/github/bluething/reactive/reactiveprogrammingwithrxjava/ch1/SampleCode.java) code we use merge.  
 Because we use asynchronous:  
@@ -152,7 +156,7 @@ See [sample12()](https://github.com/bluething/exercisereactive/blob/main/reactiv
 
 #### Cardinality
 
-|| One | Many |
+| | One | Many |
 | --- | --- | ---- |
 | Synchronous | T getData() | Iterable<T> getData()|
 | Asynchronous | Future<T> getData() | Observable<T> getData() |

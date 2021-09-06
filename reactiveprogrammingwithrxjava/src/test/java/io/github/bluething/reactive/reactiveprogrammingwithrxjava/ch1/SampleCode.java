@@ -85,6 +85,8 @@ public class SampleCode {
             s.onNext(3);
         });
 
+        // If the map operator defaulted to being asynchronous, each number (1, 2, 3) would be scheduled onto a thread where the string concatenation would be performed
+        // This is very inefficient and generally has nondeterministic latency due to scheduling, context switching, and so on.
         o.map(i -> "Number " + i).subscribe(s -> System.out.println(s));
     }
 
