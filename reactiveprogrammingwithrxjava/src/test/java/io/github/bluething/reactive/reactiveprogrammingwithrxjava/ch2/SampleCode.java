@@ -4,7 +4,10 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 public class SampleCode {
     @Test
@@ -62,6 +65,40 @@ public class SampleCode {
         };
 
         tweets.subscribe(observer);
+    }
+
+    @Test
+    public void controllingListener1() {
+        Observable<Tweet> tweets = Observable.just(new Tweet("This is tweet"));
+        Disposable disposable = tweets.subscribe(System.out::println);
+
+        disposable.dispose();
+    }
+
+    @Test
+    public void controllingListener2() {
+        Observable<Tweet> tweets = Observable.just(new Tweet("This is tweet about RxJava"));
+        DisposableObserver<Tweet> tweetDisposableObserver = tweets.subscribeWith(new DisposableObserver<Tweet>() {
+            @Override
+            public void onNext(@NonNull Tweet tweet) {
+                if (tweet.getText().contains("Java")) {
+                    System.out.println(tweet.getText());
+                    dispose();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                System.out.println(e.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println("Completed");
+            }
+        });
+
+        tweetDisposableObserver.dispose();
     }
 
     class Tweet {
