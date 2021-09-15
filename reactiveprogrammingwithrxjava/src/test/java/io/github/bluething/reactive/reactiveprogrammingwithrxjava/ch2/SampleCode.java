@@ -61,7 +61,7 @@ public class SampleCode {
             }
         };
 
-
+        tweets.subscribe(observer);
     }
 
     class Tweet {
