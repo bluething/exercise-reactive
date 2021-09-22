@@ -67,3 +67,7 @@ Don't do this! `subscribe()` will block the thread infinitely
 
 Spawn other thread  
 `subscribe() `no longer blocks client thread. What we need to do is check if the downstream disposed the stream.
+
+Handling unsubscription immediately before trying to send an event is fine as long as events are pushed relatively often. But imagine a situation in which events appear very rarely.  
+Observable can only determine that a subscriber unsubscribed when it attempts to push some event to it.  
+Sleep the thread before emitting the value. But what if the subscriber dispose after receive the item, should we wait until sleep end before emitting new value?
