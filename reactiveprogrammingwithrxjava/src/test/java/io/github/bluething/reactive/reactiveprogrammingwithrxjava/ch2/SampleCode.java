@@ -207,6 +207,28 @@ public class SampleCode {
         naturalNumbersDisposable.dispose();
     }
 
+    @Test
+    public void observableCreateInfiniteNaturalNumberUsingRunnable2() throws InterruptedException {
+        Observable<BigInteger> naturalNumbers = Observable.create(new ObservableOnSubscribe<BigInteger>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<BigInteger> emitter) throws Exception {
+                Runnable r = () -> {
+                    BigInteger i = BigInteger.ZERO;
+                    while (!emitter.isDisposed()) {
+                        emitter.onNext(i);
+                        i = i.add(BigInteger.ONE);
+                    }
+                };
+                new Thread(r).start();
+            }
+        });
+
+        Disposable naturalNumbersDisposable = naturalNumbers.subscribe(i -> log(i));
+
+        Thread.sleep(100);
+        naturalNumbersDisposable.dispose();
+    }
+
     class Tweet {
         private final String text;
 
