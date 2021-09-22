@@ -53,3 +53,8 @@ How to create Observable?
 | Observable.timer() | creates an Observable that emits one particular item after a span of time that we specify.|
 | Observable.interval() | Returns an Observable that emits an infinite sequence of ascending integers, with a constant interval of time of your choosing between emissions.|
 | Observable.defer() | Does not create the Observable until the observer subscribes, and create a fresh Observable for each observer.|
+
+What if we have multiple subscriber?  
+Use `cache()`, example use case is observable that doing database query or heavyweight computation.  
+What `cache()` does is stand between subscribe() and our custom Observable, it keeps a copy of all notifications internally.  
+`cache()` plus infinite stream is the recipe for a disaster, also known as OutOfMemoryError.
