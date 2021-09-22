@@ -58,3 +58,12 @@ What if we have multiple subscriber?
 Use `cache()`, example use case is observable that doing database query or heavyweight computation.  
 What `cache()` does is stand between subscribe() and our custom Observable, it keeps a copy of all notifications internally.  
 `cache()` plus infinite stream is the recipe for a disaster, also known as OutOfMemoryError.
+
+How to create infinite stream?  
+Computer memory is finite so how RxJava allows us to produce and consume events on the fly?
+
+Using infinite loop  
+Don't do this! `subscribe()` will block the thread infinitely
+
+Spawn other thread  
+`subscribe() `no longer blocks client thread. What we need to do is check if the downstream disposed the stream.
