@@ -10,6 +10,7 @@ import io.reactivex.observers.DisposableObserver;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
+import java.util.concurrent.TimeUnit;
 
 public class SampleCode {
     @Test
@@ -227,6 +228,33 @@ public class SampleCode {
 
         Thread.sleep(100);
         naturalNumbersDisposable.dispose();
+    }
+
+    @Test
+    public void observableCreateSleepBeforeSentItem() throws InterruptedException {
+        Observable<Integer> ints = Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Integer> emitter) throws Exception {
+                Runnable r = () -> {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (!emitter.isDisposed()) {
+                        emitter.onNext(42);
+                        emitter.onComplete();
+                    }
+                };
+
+                new Thread(r).start();
+            }
+        });
+
+        Disposable intDisposable = ints.subscribe(i -> log(i));
+        Thread.sleep(6000);
+        intDisposable.dispose();
     }
 
     class Tweet {
