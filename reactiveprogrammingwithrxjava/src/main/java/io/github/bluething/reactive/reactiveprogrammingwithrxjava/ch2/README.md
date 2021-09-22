@@ -71,3 +71,18 @@ Spawn other thread
 Handling unsubscription immediately before trying to send an event is fine as long as events are pushed relatively often. But imagine a situation in which events appear very rarely.  
 Observable can only determine that a subscriber unsubscribed when it attempts to push some event to it.  
 Sleep the thread before emitting the value. But what if the subscriber dispose after receive the item, should we wait until sleep end before emitting new value?
+
+Cold Observables  
+- Lazy and never begins to emit events until someone is actually interested.  
+- If there are no observers, Observable is just a static data structure.  
+- Each subscriber receives its own complete copy of the stream.  
+- It's typically come from `Observable.create()`.  
+- Subscribing to a cold Observable often involves a side effect happening inside create().  
+- It produces values on demand and possibly multiple times so the exact instant when an item was created is irrelevant.
+
+Hot Observables  
+- `Observable` pushes events downstream, even if no one listens and events are possibly missed.  
+- This observable independent of consumers.  
+- It's typically occur when we have absolutely no control over the source of events.  
+- We can never be sure received all events from the beginning.
+- The instant when a given value was generated is very significant because it places the event on the timescale.
