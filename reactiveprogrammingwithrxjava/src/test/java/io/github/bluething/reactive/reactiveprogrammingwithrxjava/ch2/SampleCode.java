@@ -9,6 +9,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigInteger;
+
 public class SampleCode {
     @Test
     public void observableSubscribe1() {
@@ -151,6 +153,58 @@ public class SampleCode {
         ints.subscribe(i -> log("Element: " + i));
         ints.subscribe(i -> log("Element: " + i));
         log("Exit");
+    }
+
+    // Don't run this
+    // subscribe() will block the thread infinitely
+    @Test
+    public void observableCreateInfiniteNaturalNumberUsingInfiniteLoop() {
+        Observable<BigInteger> naturalNumbers = Observable.create(subscriber -> {
+            BigInteger i =BigInteger.ZERO;
+            while (true) {
+                subscriber.onNext(i);
+                i = i.add(BigInteger.ONE);
+            }
+        });
+
+        naturalNumbers.subscribe(i -> log(i));
+    }
+
+    @Test
+    public void observableCreateInfiniteNaturalNumberUsingRunnable() throws InterruptedException {
+        Observable<BigInteger> naturalNumbers = Observable.create(new ObservableOnSubscribe<BigInteger>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<BigInteger> emitter) throws Exception {
+                Runnable r = () -> {
+                    BigInteger i = BigInteger.ZERO;
+                    while (!emitter.isDisposed()) {
+                        emitter.onNext(i);
+                        i = i.add(BigInteger.ONE);
+                    }
+                };
+                new Thread(r).start();
+            }
+        });
+
+        DisposableObserver<BigInteger> naturalNumbersDisposable = naturalNumbers.subscribeWith(new DisposableObserver<BigInteger>() {
+            @Override
+            public void onNext(@NonNull BigInteger naturalNumber) {
+                log(naturalNumber);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+
+        Thread.sleep(500);
+        naturalNumbersDisposable.dispose();
     }
 
     class Tweet {
