@@ -1,13 +1,13 @@
 package io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch2;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableObserver;
 import org.junit.jupiter.api.Test;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 public class SampleCode {
     @Test
@@ -99,6 +99,58 @@ public class SampleCode {
         });
 
         tweetDisposableObserver.dispose();
+    }
+
+    //TODO https://howtoprogram.xyz/2017/02/07/how-to-create-observable-in-rxjava-2/
+
+    private static void log(Object message) {
+        System.out.println(Thread.currentThread().getName() + ": " + message);
+    }
+
+    @Test
+    public void blockingChildThread() {
+        log("Before");
+
+        Observable.range(5, 3)
+                .subscribe(i -> log(i));
+
+        log("After");
+    }
+
+    @Test
+    public void observableCreateNotEmitEventUntilWeSubscribeIt() {
+        Observable<Integer> ints = Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Integer> emitter) throws Exception {
+                log("Create");
+                emitter.onNext(5);
+                emitter.onNext(6);
+                emitter.onNext(7);
+                emitter.onComplete();
+                log("Completed");
+            }
+        });
+
+        log("Starting");
+        ints.subscribe(i -> log("Element: " + i));
+        log("Exit");
+    }
+
+    @Test
+    public void observableWithMultipleSubscriber() {
+        Observable<Integer> ints = Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Integer> emitter) throws Exception {
+                log("Create");
+                emitter.onNext(42);
+                emitter.onComplete();
+            }
+        }).cache();
+
+        log("Starting");
+        ints.subscribe(i -> log("Element: " + i));
+        ints.subscribe(i -> log("Element: " + i));
+        log("Exit");
     }
 
     class Tweet {
