@@ -5,6 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
+import static io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch3.Sound.DAH;
+import static io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch3.Sound.DI;
+import static io.reactivex.Observable.empty;
+import static io.reactivex.Observable.just;
+
 public class SampleCode {
 
     @Test
@@ -17,7 +22,7 @@ public class SampleCode {
 
     @Test
     public void mapOperator() {
-        Observable<String> formatedInt = Observable.just(8, 9, 10)
+        Observable<String> formatedInt = just(8, 9, 10)
                 .filter(i -> i % 3 > 0)
                 .map(i -> "#" + i*10)
                 .filter(s -> s.length() < 4);
@@ -27,7 +32,7 @@ public class SampleCode {
 
     @Test
     public void peekingTheEvent() {
-        Observable<String> formatedInt = Observable.just(8, 9, 10)
+        Observable<String> formatedInt = just(8, 9, 10)
                 .doOnNext(i -> System.out.println("A: " + i))
                 .filter(i -> i % 3 > 0)
                 .doOnNext(i -> System.out.println("B: " + i))
@@ -41,27 +46,27 @@ public class SampleCode {
 
     @Test
     public void flatMap() {
-        Observable<Integer> ints = Observable.just(1, 2, 3, 4);
+        Observable<Integer> ints = just(1, 2, 3, 4);
 
         ints.map(i -> i*2)
                 .filter(i -> i != 10)
                 .subscribe(i -> System.out.println(i));
 
-        ints.flatMap(i -> Observable.just(i*2))
-                .flatMap(i -> (i != 10) ? Observable.just(i) : Observable.empty())
+        ints.flatMap(i -> just(i*2))
+                .flatMap(i -> (i != 10) ? just(i) : empty())
                 .subscribe(i -> System.out.println(i));
     }
 
     @Test
     public void useFlatMapToHandleMethodReturnAnIterable() {
-        Observable<Customer> customers = Observable.just(new Customer());
+        Observable<Customer> customers = just(new Customer());
         Observable<Order> orders = customers
                 .flatMap(customer -> Observable.fromIterable(customer.getOrders()));
     }
 
     @Test
     public void useFlatMapToHandleMethodReturnAnIterable2() {
-        Observable<Customer> customers = Observable.just(new Customer());
+        Observable<Customer> customers = just(new Customer());
         Observable<Order> orders = customers
                 .map(Customer::getOrders)
                 .flatMap(Observable::fromIterable);
@@ -69,16 +74,16 @@ public class SampleCode {
 
     @Test
     public void useFlatMapToHandleMethodReturnAnIterable3() {
-        Observable<Customer> customers = Observable.just(new Customer());
+        Observable<Customer> customers = just(new Customer());
         Observable<Order> orders = customers
                 .flatMapIterable(Customer::getOrders);
     }
 
     private Observable<Long> upload(UUID id) {
-        return Observable.just(42L);
+        return just(42L);
     }
     private Observable<Rating> rate(UUID id) {
-        return Observable.just(new Rating());
+        return just(new Rating());
     }
 
     // naive implementation
@@ -95,10 +100,96 @@ public class SampleCode {
         UUID id = UUID.randomUUID();
         upload(id)
                 .flatMap(
-                        bytes -> Observable.empty(),
+                        bytes -> empty(),
                         e -> Observable.error(e),
                         () -> rate(id)
                 );
+    }
+
+    private Observable<Sound> toMorseCode(char ch) {
+        switch (ch) {
+            case 'a':
+                return just(DI, DAH);
+            case 'b':
+                return just(DAH, DI, DI, DI);
+            case 'c':
+                return just(DAH, DI, DAH, DI);
+            case 'd':
+                return just(DAH, DI, DI);
+            case 'e':
+                return just(DI);
+            case 'f':
+                return just(DI, DI, DAH, DI);
+            case 'g':
+                return just(DAH, DAH, DI);
+            case 'h':
+                return just(DI, DI, DI, DI);
+            case 'i':
+                return just(DI, DI);
+            case 'j':
+                return just(DI, DAH, DAH, DAH);
+            case 'k':
+                return just(DAH, DI, DAH);
+            case 'l':
+                return just(DI, DAH, DI, DI);
+            case 'm':
+                return just(DAH, DAH);
+            case 'n':
+                return just(DAH, DI);
+            case 'o':
+                return just(DAH, DAH, DAH);
+            case 'p':
+                return just(DI, DAH, DAH, DI);
+            case 'q':
+                return just(DAH, DAH, DI, DAH);
+            case 'r':
+                return just(DI, DAH, DI);
+            case 's':
+                return just(DI, DI, DI);
+            case 't':
+                return just(DAH);
+            case 'u':
+                return just(DI, DI, DAH);
+            case 'v':
+                return just(DI, DI, DI, DAH);
+            case 'w':
+                return just(DI, DAH, DAH);
+            case 'x':
+                return just(DAH, DI, DI, DAH);
+            case 'y':
+                return just(DAH, DI, DAH, DAH);
+            case 'z':
+                return just(DAH, DAH, DI, DI);
+            case '0':
+                return just(DAH, DAH, DAH, DAH, DAH);
+            case '1':
+                return just(DI, DAH, DAH, DAH, DAH);
+            case '2':
+                return just(DI, DI, DAH, DAH, DAH);
+            case '3':
+                return just(DI, DI, DI, DAH, DAH);
+            case '4':
+                return just(DI, DI, DI, DI, DAH);
+            case '5':
+                return just(DI, DI, DI, DI, DI);
+            case '6':
+                return just(DAH, DI, DI, DI, DI);
+            case '7':
+                return just(DAH, DAH, DI, DI, DI);
+            case '8':
+                return just(DAH, DAH, DAH, DI, DI);
+            case '9':
+                return just(DAH, DAH, DAH, DAH, DI);
+            default:
+                return empty();
+        }
+    }
+    @Test
+    public void flatMap2() {
+        Observable.just('S', 'p', 'a', 'r', 't', 'a')
+                .map(Character::toLowerCase)
+                .flatMap(this::toMorseCode)
+                .subscribe(sound -> System.out.println(sound));
     }
 
 }
