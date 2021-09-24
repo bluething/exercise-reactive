@@ -3,6 +3,8 @@ package io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch3;
 import io.reactivex.Observable;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 public class SampleCode {
 
     @Test
@@ -70,6 +72,33 @@ public class SampleCode {
         Observable<Customer> customers = Observable.just(new Customer());
         Observable<Order> orders = customers
                 .flatMapIterable(Customer::getOrders);
+    }
+
+    private Observable<Long> upload(UUID id) {
+        return Observable.just(42L);
+    }
+    private Observable<Rating> rate(UUID id) {
+        return Observable.just(new Rating());
+    }
+
+    // naive implementation
+    // wait till end to call rate
+    private void store(UUID id) {
+        upload(id).subscribe(bytes -> {},
+                e -> System.out.println(e.getMessage()),
+                () -> rate(id)
+        );
+    }
+
+    @Test
+    public void flatMapReactToOtherNotification() {
+        UUID id = UUID.randomUUID();
+        upload(id)
+                .flatMap(
+                        bytes -> Observable.empty(),
+                        e -> Observable.error(e),
+                        () -> rate(id)
+                );
     }
 
 }
