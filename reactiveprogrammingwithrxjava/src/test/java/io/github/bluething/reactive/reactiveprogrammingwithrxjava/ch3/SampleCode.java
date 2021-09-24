@@ -50,4 +50,26 @@ public class SampleCode {
                 .subscribe(i -> System.out.println(i));
     }
 
+    @Test
+    public void useFlatMapToHandleMethodReturnAnIterable() {
+        Observable<Customer> customers = Observable.just(new Customer());
+        Observable<Order> orders = customers
+                .flatMap(customer -> Observable.fromIterable(customer.getOrders()));
+    }
+
+    @Test
+    public void useFlatMapToHandleMethodReturnAnIterable2() {
+        Observable<Customer> customers = Observable.just(new Customer());
+        Observable<Order> orders = customers
+                .map(Customer::getOrders)
+                .flatMap(Observable::fromIterable);
+    }
+
+    @Test
+    public void useFlatMapToHandleMethodReturnAnIterable3() {
+        Observable<Customer> customers = Observable.just(new Customer());
+        Observable<Order> orders = customers
+                .flatMapIterable(Customer::getOrders);
+    }
+
 }
