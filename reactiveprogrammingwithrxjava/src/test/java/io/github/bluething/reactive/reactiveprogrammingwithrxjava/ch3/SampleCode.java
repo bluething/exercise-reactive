@@ -3,12 +3,13 @@ package io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch3;
 import io.reactivex.Observable;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.plaf.TableHeaderUI;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch3.Sound.DAH;
 import static io.github.bluething.reactive.reactiveprogrammingwithrxjava.ch3.Sound.DI;
-import static io.reactivex.Observable.empty;
-import static io.reactivex.Observable.just;
+import static io.reactivex.Observable.*;
 
 public class SampleCode {
 
@@ -190,6 +191,26 @@ public class SampleCode {
                 .map(Character::toLowerCase)
                 .flatMap(this::toMorseCode)
                 .subscribe(sound -> System.out.println(sound));
+    }
+
+    @Test
+    public void delay() throws InterruptedException {
+        Observable.just("Lorem", "ipsum", "dolor", "sit", "amet",
+                "consectetur", "adipiscing", "elit")
+                .delay(word -> timer(word.length(), TimeUnit.SECONDS))
+                .subscribe(System.out::println);
+
+        Thread.sleep(15000);
+    }
+
+    @Test
+    public void replaceDelayWithTimerAndFlatMap() throws InterruptedException {
+        Observable.just("Lorem", "ipsum", "dolor", "sit", "amet",
+                        "consectetur", "adipiscing", "elit")
+                        .flatMap(word -> timer(word.length(), TimeUnit.SECONDS).map(x -> word))
+                                .subscribe(System.out::println);
+
+        Thread.sleep(15000);
     }
 
 }
