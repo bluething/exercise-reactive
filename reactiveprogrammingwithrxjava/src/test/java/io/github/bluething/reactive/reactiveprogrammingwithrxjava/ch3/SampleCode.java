@@ -250,4 +250,11 @@ public class SampleCode {
         Thread.sleep(1000);
     }
 
+    @Test
+    public void concatMap() throws InterruptedException {
+        Observable.just(DayOfWeek.SUNDAY, DayOfWeek.MONDAY)
+                .concatMap(this::loadRecordsFor)
+                .subscribe(System.out::println);
+        Thread.sleep(1000);
+    }
 }
