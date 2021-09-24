@@ -37,4 +37,17 @@ public class SampleCode {
         formatedInt.subscribe();
     }
 
+    @Test
+    public void flatMap() {
+        Observable<Integer> ints = Observable.just(1, 2, 3, 4);
+
+        ints.map(i -> i*2)
+                .filter(i -> i != 10)
+                .subscribe(i -> System.out.println(i));
+
+        ints.flatMap(i -> Observable.just(i*2))
+                .flatMap(i -> (i != 10) ? Observable.just(i) : Observable.empty())
+                .subscribe(i -> System.out.println(i));
+    }
+
 }
