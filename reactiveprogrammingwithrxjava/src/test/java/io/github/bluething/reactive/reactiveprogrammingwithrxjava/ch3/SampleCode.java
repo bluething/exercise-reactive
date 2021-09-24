@@ -23,4 +23,18 @@ public class SampleCode {
         formatedInt.subscribe(s -> System.out.println(s));
     }
 
+    @Test
+    public void peekingTheEvent() {
+        Observable<String> formatedInt = Observable.just(8, 9, 10)
+                .doOnNext(i -> System.out.println("A: " + i))
+                .filter(i -> i % 3 > 0)
+                .doOnNext(i -> System.out.println("B: " + i))
+                .map(i -> "#" + i * 10)
+                .doOnNext(i -> System.out.println("C: " + i))
+                .filter(s -> s.length() < 4)
+                .doOnNext(i -> System.out.println("D: " + i));
+
+        formatedInt.subscribe();
+    }
+
 }
