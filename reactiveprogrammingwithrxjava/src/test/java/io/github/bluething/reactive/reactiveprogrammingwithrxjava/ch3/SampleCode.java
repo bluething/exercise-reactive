@@ -4,6 +4,7 @@ import io.reactivex.Observable;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.plaf.TableHeaderUI;
+import java.time.DayOfWeek;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -211,6 +212,42 @@ public class SampleCode {
                                 .subscribe(System.out::println);
 
         Thread.sleep(15000);
+    }
+
+    @Test
+    public void flatMapOrder() throws InterruptedException {
+        Observable.just(10L, 1L)
+                .flatMap(x -> just(x)
+                        .delay(x, TimeUnit.SECONDS))
+                .subscribe(System.out::println);
+
+        Thread.sleep(11000);
+    }
+
+    private Observable<String> loadRecordsFor(DayOfWeek dow) {
+        switch (dow) {
+            case SUNDAY:
+                return
+                        interval(90, TimeUnit.MILLISECONDS)
+                                .take(5)
+                                .map(i -> "Sun-" + i);
+            case MONDAY:
+                return
+                        interval(65, TimeUnit.MILLISECONDS)
+                                .take(5)
+                                .map(i -> "Mon-" + i);
+            default:
+                throw new IllegalArgumentException("Illegal: " + dow);
+        }
+    }
+
+    @Test
+    public void flatMapOrder2() throws InterruptedException {
+        Observable.just(DayOfWeek.SUNDAY, DayOfWeek.MONDAY)
+                .flatMap(this::loadRecordsFor)
+                .subscribe(System.out::println);
+
+        Thread.sleep(1000);
     }
 
 }
