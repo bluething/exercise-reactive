@@ -22,7 +22,11 @@ flatMap
 `flatMap()` takes `Observable<T>` and a function from `T` to `Observable<R>`.  
 `flatMap()` first constructs `Observable<Observable<R>>` replacing all upstream values of type `T` with `Observable<R>` (just like map()).  
 Then it automatically subscribes to these inner `Observable<R>` streams to produce a single stream of type `R`, containing all values from all inner streams, as they come.  
-`flatMap()` merges the emissions of these Observables, so that they may interleave.
+`flatMap()` merges the emissions of these Observables, so that they may _interleave_.
+
+Why `flatMap()` cannot give any guarantee about what order of those subevents will arrive at the downstream operator/subscriber?  
+What `flatMap()` does is take a master sequence (Observable) of values appearing over time (events) and replaces each of the events with an independent subsequence.  
+We no longer have a single the master sequence but a set of Observables, _each working on its own_, coming and going over time.
 
 Use `flatMap()` for this condition:  
 1. The result of transformation in map() must be an Observable. For example, performing long-running, asynchronous operation on each element of the stream without blocking.  
