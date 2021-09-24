@@ -37,3 +37,8 @@ Watch out when simply wrapping methods in an Observable!
 If the method was not a simple getter but an expensive operation in terms of run time, it is better to implement the method to explicitly return Observable<Order>.
 
 `flatMap()` can react not only to events, but on any notification, namely events, errors, and completion.
+
+Postponing events using `delay()`  
+![delay](https://github.com/bluething/exercisereactive/blob/main/images/delaydiagram.png?raw=true)  
+`delay()` basically takes an upstream Observable and shifts all events further in time.  
+`delay()` shifts every single event further by a given amount of time, whereas `timer()` simply "sleeps" and emits a special event after given time.
