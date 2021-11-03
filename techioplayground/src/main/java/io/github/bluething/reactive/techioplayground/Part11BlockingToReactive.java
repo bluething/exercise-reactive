@@ -2,7 +2,6 @@ package io.github.bluething.reactive.techioplayground;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 public class Part11BlockingToReactive {
